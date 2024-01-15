@@ -45,37 +45,61 @@
 
             <div class="row p-3">
                 @foreach($users as $user)
-                    <div class="col-sm-4">
-                        <div class="card" style="width: 23.5rem; margin-top: 10px;">
-                            <div class="card-body">
-                                @if($user['avatar'])
-                                    <img class="rounded-circle" style="height: 40px;" src="{{ asset("avatar/avatar.png") }}">
-                                @else
-                                    <div id="profileImage">{{$user['name'][0]}}</div>
-                                @endif
-                                <h5 class="card-title">{{ $user['name'] }}</h5>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ $user['occupation'] }}</h6>
-                                <div class="row">
-                                    <div class="ml-3">
-                                        <canvas class="chart" id="{{uniqid();}}" time="{{json_encode($user['timelogs'])}}"
-                                            revenue="{{json_encode($user['revenuelogs'])}}"></canvas>
-                                    </div>
-                                </div>
-                                <div class="widget-content-left ml-3">
-
-                                    <div class="widget-heading" style="font-size: 12px;">{{$user['impression']}}</div>
-                                    <div class="widget-subheading" style="font-size: 10px;">Impression</div>
-                                    <div class="widget-heading" style="font-size: 12px;">{{$user['conversion']}}</div>
-                                    <div class="widget-subheading" style="font-size: 10px;">Conversions</div>
-                                    <div class="widget-heading" style="font-size: 12px;">${{$user['revenue']}}</div>
-                                    <div class="widget-subheading" style="font-size: 10px;">Revenu</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="widget-heading ml-3">Conversions {{$user['duration']}} </div>
-                            </div>
-                        </div>
+                    <div class="col-md-4 mb-4">
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+                @if($user['avatar'])
+                <img class="rounded-circle mr-2" style="height: 40px;" src="{{ asset('avatar/avatar.png') }}" alt="avatar">
+                @else
+                <div id="profileImage" class="rounded-circle mr-2">{{ $user['name'][0] }}</div>
+                @endif
+                <div>
+                    <h5 class="card-title mb-0">{{ $user['name'] }}</h5>
+                    <h6 class="card-subtitle text-muted">{{ $user['occupation'] }}</h6>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <canvas class="chart" id="{{ uniqid() }}" time="{{ json_encode($user['timelogs']) }}"
+                        revenue="{{ json_encode($user['revenuelogs']) }}"></canvas>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="widget-content-left">
+                        <div class="widget-heading" style="font-size: 12px;">{{ $user['impression'] }}</div>
+                        <div class="widget-subheading" style="font-size: 10px;">Impression</div>
                     </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="widget-content-left">
+                        <div class="widget-heading" style="font-size: 12px;">{{ $user['conversion'] }}</div>
+                        <div class="widget-subheading" style="font-size: 10px;">Conversions</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="widget-content-left">
+                        <div class="widget-heading" style="font-size: 12px;">${{ $user['revenue'] }}</div>
+                        <div class="widget-subheading" style="font-size: 10px;">Revenue</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="widget-heading">Conversions {{ $user['duration'] }}</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
                 @endforeach
             </div>
         </div>

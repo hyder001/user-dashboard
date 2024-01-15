@@ -26,7 +26,6 @@ class UserController extends Controller
             });
 
             $countValues = array_count_values(array_column($userLogs, 'type'));
-
             return array_merge($user, [
                 'impression' => $countValues['impression'] ?? 0,
                 'conversion' => $countValues['conversion'] ?? 0,
