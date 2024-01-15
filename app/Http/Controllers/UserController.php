@@ -13,31 +13,43 @@ class UserController extends Controller
         return view('user.dashboard',compact('users'));
     }
 
-    public function getUserData(){
+    public function getUserData()
+    {
         $users = json_decode(file_get_contents(storage_path() . "/users.json"), true);
         $logs = json_decode(file_get_contents(storage_path() . "/logs.json"), true);
 
-        foreach ($users as $key => $user) {
-            
-            $user_id = $user['id'];
+        return array_map(function ($user) use ($logs) {
+            $userId = $user['id'];
 
-            $userLogs = array_filter($logs, function ($var) use ($user_id) { return ($var['user_id'] == $user_id ); });
-            $countValues = array_count_values( array_column($userLogs, 'type'));
+            $userLogs = array_filter($logs, function ($var) use ($userId) {
+                return $var['user_id'] == $userId;
+            });
 
-            $users[$key]['impression'] = $countValues['impression'];
-            $users[$key]['conversion'] = $countValues['conversion'];
-            $users[$key]['revenue'] = number_format((float)array_sum(array_column($userLogs, 'revenue')), 2, '.', '');
+            $countValues = array_count_values(array_column($userLogs, 'type'));
 
-            array_walk($userLogs, function (&$v){ unset($v['type']); unset($v['user_id']); });
-            usort($userLogs, function($a, $b) { return $a['time'] <=> $b['time']; });
-             
-            $users[$key]['revenuelogs']=array_column($userLogs, 'revenue');
-            $users[$key]['timelogs']=array_column($userLogs, 'time');
-
-            $users[$key]['duration'] = date('n/d',strtotime($users[$key]['timelogs'][0])) ." - ". date('n/d',strtotime(end($users[$key]['timelogs'])));
-        }
-
-        return $users;
-
+            return array_merge($user, [
+                'impression' => $countValues['impression'] ?? 0,
+                'conversion' => $countValues['conversion'] ?? 0,
+                'revenue' => number_format((float) array_sum(array_column($userLogs, 'revenue')), 2, '.', ''),
+                'revenuelogs' => array_column($userLogs, 'revenue'),
+                'timelogs' => array_column($userLogs, 'time'),
+                'duration' => $this->calculateDuration($userLogs),
+            ]);
+        }, $users);
     }
+
+    public function calculateDuration($userLogs)
+    {
+        array_walk($userLogs, function (&$v) {
+            unset($v['type']);
+            unset($v['user_id']);
+        });
+
+        usort($userLogs, function ($a, $b) {
+            return $a['time'] <=> $b['time'];
+        });
+
+        return date('n/d', strtotime($userLogs[0]['time'])) . " - " . date('n/d', strtotime(end($userLogs)['time']));
+    }
+
 }
