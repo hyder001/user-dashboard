@@ -125,7 +125,7 @@ function renderChart(chartDom) {
 
     option = {
         animationDuration: 750,
-        color: "#5470c6",
+        color: "#666666",
         gradientColor: "green",
         grid: {
             show: false,
